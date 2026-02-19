@@ -1,0 +1,13 @@
+# Dependencies
+node_modules/
+server/node_modules/
+
+# Environment variables
+.env
+server/.env
+
+# Vite build
+dist/
+
+# Mac
+.DS_Store
