@@ -3,6 +3,8 @@ import { useState, useEffect, useRef } from "react";
 import Header from "./components/Header";
 import CategorySection from "./components/CategorySection";
 
+const API_URL = import.meta.env.VITE_API_URL || "";
+
 function App() {
   const [activeCategory, setActiveCategory] = useState(null);
   const [splashState, setSplashState] = useState("visible");
@@ -14,8 +16,8 @@ function App() {
   // Cargar datos desde la API
   useEffect(() => {
     Promise.all([
-      fetch("/api/categorias").then((r) => r.json()),
-      fetch("/api/productos").then((r) => r.json()),
+      fetch(`${API_URL}/api/categorias`).then((r) => r.json()),
+      fetch(`${API_URL}/api/productos`).then((r) => r.json()),
     ]).then(([cats, prods]) => {
       setCategorias(cats);
       setProductos(prods);
@@ -34,14 +36,20 @@ function App() {
   }, []);
 
   // Scroll activo
-  useEffect(() => {
-    if (categorias.length === 0) return;
+  const categoriasRef = useRef([]);
 
+  useEffect(() => {
+    categoriasRef.current = categorias;
+  }, [categorias]);
+
+  useEffect(() => {
     const getActive = () => {
+      const cats = categoriasRef.current;
+      if (cats.length === 0) return;
       const headerHeight = document.querySelector(".header")?.offsetHeight ?? 0;
       const threshold = headerHeight + 1;
-      let current = categorias[0].id;
-      for (const { id } of categorias) {
+      let current = cats[0].id;
+      for (const { id } of cats) {
         const el = document.getElementById(id);
         if (el && el.getBoundingClientRect().top <= threshold) current = id;
       }
@@ -60,7 +68,7 @@ function App() {
       window.removeEventListener("scroll", handleScroll);
       cancelAnimationFrame(rafRef.current);
     };
-  }, [categorias]);
+  }, []);
 
   const handleCategoryClick = (id) => {
     const section = document.getElementById(id);
