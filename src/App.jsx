@@ -3,8 +3,7 @@ import { useState, useEffect, useRef } from "react";
 import Header from "./components/Header";
 import CategorySection from "./components/CategorySection";
 
-const API_URL = import.meta.env.VITE_API_URL || "";
-console.log("API_URL:", API_URL);
+const API_URL = "";
 
 function App() {
   const [activeCategory, setActiveCategory] = useState(null);

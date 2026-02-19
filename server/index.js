@@ -1,9 +1,9 @@
 if (process.env.NODE_ENV !== "production") {
   require("dotenv").config();
 }
-
 const express = require("express");
 const cors = require("cors");
+const path = require("path");
 const pool = require("./db");
 
 const app = express();
@@ -12,16 +12,7 @@ const PORT = process.env.PORT || 3001;
 app.use(cors());
 app.use(express.json());
 
-// Test de conexión a MySQL al iniciar
-(async () => {
-  try {
-    const [rows] = await pool.query("SELECT 1 + 1 AS result");
-    console.log("✅ Conexión a MySQL OK:", rows);
-  } catch (err) {
-    console.error("❌ Error de conexión a MySQL:", err);
-    process.exit(1);
-  }
-})();
+app.get("/health", (req, res) => res.json({ status: "ok" }));
 
 // GET todas las categorías
 app.get("/api/categorias", async (req, res) => {
@@ -58,9 +49,18 @@ app.get("/api/productos/:categoria", async (req, res) => {
   }
 });
 
+// Servir el build de React
+app.use(express.static(path.join(__dirname, "../dist")));
+
+// Cualquier ruta que no sea /api devuelve el index.html
+app.get("*", (req, res) => {
+  if (!req.path.startsWith("/api")) {
+    res.sendFile(path.join(__dirname, "../dist/index.html"));
+  }
+});
+
 app.listen(PORT, () => {
-  const host = process.env.RAILWAY_STATIC_URL || `http://localhost:${PORT}`;
-  console.log(`Servidor corriendo en ${host}`);
+  console.log(`Servidor corriendo en http://localhost:${PORT}`);
 }).on('error', (err) => {
   console.error('Error arrancando servidor:', err);
   process.exit(1);
