@@ -1,4 +1,6 @@
-require("dotenv").config();
+if (process.env.NODE_ENV !== "production") {
+  require("dotenv").config();
+}
 const express = require("express");
 const cors = require("cors");
 const pool = require("./db");
@@ -46,4 +48,12 @@ app.get("/api/productos/:categoria", async (req, res) => {
 
 app.listen(PORT, () => {
   console.log(`Servidor corriendo en http://localhost:${PORT}`);
+}).on('error', (err) => {
+  console.error('Error arrancando servidor:', err);
+  process.exit(1);
+});
+
+process.on('unhandledRejection', (err) => {
+  console.error('Error no manejado:', err);
+  process.exit(1);
 });
