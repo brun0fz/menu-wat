@@ -1,15 +1,12 @@
--- Crear base de datos
 CREATE DATABASE IF NOT EXISTS wat_menu CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE wat_menu;
 
--- Tabla de categorías
 CREATE TABLE IF NOT EXISTS categorias (
   id VARCHAR(50) PRIMARY KEY,
   label VARCHAR(100) NOT NULL,
   orden INT DEFAULT 0
 );
 
--- Tabla de productos
 CREATE TABLE IF NOT EXISTS productos (
   id INT AUTO_INCREMENT PRIMARY KEY,
   nombre VARCHAR(200) NOT NULL,
@@ -18,16 +15,17 @@ CREATE TABLE IF NOT EXISTS productos (
   categoria_id VARCHAR(50) NOT NULL,
   subcategoria VARCHAR(100),
   imagen VARCHAR(500),
+  activo TINYINT(1) DEFAULT 1,
+  orden INT DEFAULT 0,
+  precio_numero DECIMAL(10,2),
   FOREIGN KEY (categoria_id) REFERENCES categorias(id)
 );
 
--- Insertar categorías
 INSERT INTO categorias (id, label, orden) VALUES
   ('hot-season', 'HOT SEASON', 1),
   ('bebidas', 'Bebidas', 2),
   ('para-comer', 'Para comer', 3);
 
--- Insertar productos
 INSERT INTO productos (nombre, descripcion, precio, categoria_id, subcategoria, imagen) VALUES
   ('Iced Carrot Latte', 'Reducción de zanahoria, especias, espresso y cold foam', '6.500', 'hot-season', NULL, 'madmcha.jpg'),
   ('Iced strawberry Matcha', 'Shot de matcha, pulpa de frutillas, leche y cold foam', '7.500', 'hot-season', NULL, 'strawmatcha.jpg'),
